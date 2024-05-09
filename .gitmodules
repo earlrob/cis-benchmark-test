@@ -1,0 +1,3 @@
+[submodule "roles/ansible-cis-ubuntu-2204"]
+	path = roles/ansible-cis-ubuntu-2204
+	url = https://github.com/MVladislav/ansible-cis-ubuntu-2204.git
