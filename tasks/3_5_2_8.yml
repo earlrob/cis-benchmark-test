@@ -1,0 +1,18 @@
+---
+
+- name: "SECTION4 | 4.2.8 | Ensure nftables default deny firewall policy"
+  ansible.builtin.command: >
+    nft chain inet {{ cis_ubuntu2204_firewall_nftables_table_name }} {{ item }} { policy drop \; }
+  changed_when: false
+  failed_when: false
+  with_items:
+    - input
+    - forward
+    - output
+#  when:
+#    - cis_ubuntu2204_rule_4_2_8
+#    - cis_ubuntu2204_firewall == "nftables"
+  tags:
+    - rule_4_2
+    - server_l1
+    - workstation_l1
