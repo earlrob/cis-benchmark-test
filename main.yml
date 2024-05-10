@@ -1,0 +1,54 @@
+- name: CIS | install on clients
+  become: true
+  remote_user: "{{ ansible_user }}"
+  hosts:
+    - localhost
+  vars:
+    cis_ubuntu2204_section1_owner_default: root
+    cis_ubuntu2204_section1_group_default: root
+    cis_ubuntu2204_section1_mode_default: "0644"
+    cis_ubuntu2204_rule_1_1_2_1_2: true
+    cis_ubuntu2204_rule_1_1_2_1_3: true
+    cis_ubuntu2204_rule_1_1_2_1_4: true
+
+    cis_ubuntu2204_firewall_nftables_table_name: filter
+
+    cis_ubuntu2204_rule_6_3_4_0: true
+    cis_ubuntu2204_rule_6_3_4_1: true
+    cis_ubuntu2204_rule_6_3_4_2: true
+    cis_ubuntu2204_rule_6_3_4_3: true
+    cis_ubuntu2204_rule_6_3_4_4: true
+    cis_ubuntu2204_rule_6_3_4_5: true
+    cis_ubuntu2204_rule_6_3_4_6: true
+    cis_ubuntu2204_rule_6_3_4_7: true
+    cis_ubuntu2204_rule_6_3_4_8: true
+    cis_ubuntu2204_rule_6_3_4_9: true
+    cis_ubuntu2204_rule_6_3_4_10: true
+
+    cis_ubuntu2204_regex_base_search: '^(#(\s)*)?'
+    cis_ubuntu2204_regex_base_search_equals: '\s*=.*$'
+    # (cis_ubuntu2204_rule_6_3_4_1-4)
+    cis_ubuntu2204_audit_log_path: /var/log/audit
+
+    ubtu24cis_rule_5_2_4: true
+    ubtu24cis_sshd:
+      allow_groups: sudo
+
+#  roles:
+#    - role: ansible-cis-ubuntu-2204
+#      cis_ubuntu2204_section1: true
+#      #
+#      cis_ubuntu2204_rule_1_1_2_1: true
+#
+  tasks:
+    - name: CIS 1_1_2_1 Ensure /tmp is a separate partition
+      include: tasks/1_1_2_1.yml
+
+    #- name: CIS 3_5_2_8 Ensure nftables default deny firewall policy
+    #  include: tasks/3_5_2_8.yml
+    #
+    #- name: CIS 4_2_3 (6_3_4.x)
+    #  include: tasks/4_2_3.yml
+
+    - name: CIS 5_2_4
+      include: tasks/5_2_4.yml

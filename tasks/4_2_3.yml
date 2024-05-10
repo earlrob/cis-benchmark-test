@@ -1,0 +1,240 @@
+---
+
+- name: "SECTION6 | 6.3.4.0 | Ensure audit log_file is configured"
+  ansible.builtin.lineinfile:
+    dest: /etc/audit/auditd.conf
+    regexp: "{{ item.reg }}"
+    line: "{{ item.line }}"
+    state: present
+    create: true
+    owner: root
+    group: root
+    mode: "0640"
+  with_items:
+    - reg: "{{ cis_ubuntu2204_regex_base_search }}log_file{{ cis_ubuntu2204_regex_base_search_equals }}"
+      line: "log_file = {{ cis_ubuntu2204_audit_log_path }}/audit.log"
+  notify: restart auditd
+  when:
+    - cis_ubuntu2204_rule_6_3_4_0
+  tags:
+    - rule_6_3_4
+    - server_l2
+    - workstation_l2
+
+- name: "SECTION6 | 6.3.4.1 | Ensure audit log files mode is configured"
+  ansible.builtin.file:
+    path: "{{ cis_ubuntu2204_audit_log_path }}/audit.log"
+    state: touch
+    mode: "0640"
+  when:
+    - cis_ubuntu2204_rule_6_3_4_1
+  tags:
+    - rule_6_3_4
+    - server_l2
+    - workstation_l2
+    - molecule-idempotence-notest
+
+- name: "SECTION6 | 6.3.4.2 | Ensure audit log files owner is configured"
+  ansible.builtin.file:
+    path: "{{ cis_ubuntu2204_audit_log_path }}/audit.log"
+    owner: root
+  when:
+    - cis_ubuntu2204_rule_6_3_4_2
+  tags:
+    - rule_6_3_4
+    - server_l2
+    - workstation_l2
+
+- name: "SECTION6 | 6.3.4.3 | Ensure audit log files group owner is configured"
+  when:
+    - cis_ubuntu2204_rule_6_3_4_3
+  tags:
+    - rule_6_3_4
+    - server_l2
+    - workstation_l2
+  block:
+    - name: "SECTION6 | 6.3.4.3 | Ensure audit log files group owner is configured | auditd.conf log_group"
+      ansible.builtin.lineinfile:
+        dest: /etc/audit/auditd.conf
+        regexp: "{{ cis_ubuntu2204_regex_base_search }}log_group{{ cis_ubuntu2204_regex_base_search_equals }}"
+        line: "log_group = {{ cis_ubuntu2204_audit_log_group }}"
+        state: present
+        create: true
+        owner: root
+        group: root
+        mode: "0640"
+    - name: "SECTION6 | 6.3.4.3 | Ensure audit log files group owner is configured | set folder group"
+      ansible.builtin.file:
+        path: "{{ cis_ubuntu2204_audit_log_path }}"
+        group: "{{ cis_ubuntu2204_audit_log_group }}"
+        state: directory
+        mode: "0750"
+    - name: "SECTION6 | 6.3.4.3 | Ensure audit log files group owner is configured | set file group"
+      ansible.builtin.file:
+        path: "{{ cis_ubuntu2204_audit_log_path }}/audit.log"
+        group: "{{ cis_ubuntu2204_audit_log_group }}"
+
+- name: "SECTION6 | 6.3.4.4 | Ensure the audit log file directory mode is configured"
+  ansible.builtin.file:
+    path: "{{ cis_ubuntu2204_audit_log_path }}"
+    state: directory
+    mode: "0750"
+  when:
+    - cis_ubuntu2204_rule_6_3_4_4
+  tags:
+    - rule_6_3_4
+    - server_l2
+    - workstation_l2
+
+- name: "SECTION6 | 6.3.4.5 | Ensure audit configuration files mode is configured"
+  when:
+    - cis_ubuntu2204_rule_6_3_4_5
+  tags:
+    - rule_6_3_4
+    - server_l2
+    - workstation_l2
+  block:
+    - name: "SECTION6 | 6.3.4.5 | Ensure audit configuration files mode is configured | find *.conf"
+      ansible.builtin.find:
+        paths: /etc/audit/
+        file_type: file
+        patterns: "*.conf"
+        recurse: true
+      register: cis_ubuntu2204_audit_files_conf
+    - name: "SECTION6 | 6.3.4.5 | Ensure audit configuration files mode is configured | update *.conf"
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        mode: "0640"
+      with_items: "{{ cis_ubuntu2204_audit_files_conf.files }}"
+    - name: "SECTION6 | 6.3.4.5 | Ensure audit configuration files mode is configured | find *.rules"
+      ansible.builtin.find:
+        paths: /etc/audit/
+        file_type: file
+        patterns: "*.rules"
+        recurse: true
+      register: cis_ubuntu2204_audit_files_rules
+    - name: "SECTION6 | 6.3.4.5 | Ensure audit configuration files mode is configured | update *.rules"
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        mode: "0640"
+      with_items: "{{ cis_ubuntu2204_audit_files_rules.files }}"
+
+- name: "SECTION6 | 6.3.4.6 | Ensure audit configuration files owner is configured"
+  when:
+    - cis_ubuntu2204_rule_6_3_4_6
+  tags:
+    - rule_6_3_4
+    - server_l2
+    - workstation_l2
+  block:
+    - name: "SECTION6 | 6.3.4.6 | Ensure audit configuration files owner is configured | find *.conf"
+      ansible.builtin.find:
+        paths: /etc/audit/
+        file_type: file
+        patterns: "*.conf"
+        recurse: true
+      register: cis_ubuntu2204_audit_files_conf
+    - name: "SECTION6 | 6.3.4.6 | Ensure audit configuration files owner is configured | update *.conf"
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        owner: root
+      with_items: "{{ cis_ubuntu2204_audit_files_conf.files }}"
+    - name: "SECTION6 | 6.3.4.6 | Ensure audit configuration files owner is configured | find *.rules"
+      ansible.builtin.find:
+        paths: /etc/audit/
+        file_type: file
+        patterns: "*.rules"
+        recurse: true
+      register: cis_ubuntu2204_audit_files_rules
+    - name: "SECTION6 | 6.3.4.6 | Ensure audit configuration files owner is configured | update *.rules"
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        owner: root
+      with_items: "{{ cis_ubuntu2204_audit_files_rules.files }}"
+
+- name: "SECTION6 | 6.3.4.7 | Ensure audit configuration files group owner is configured"
+  when:
+    - cis_ubuntu2204_rule_6_3_4_7
+  tags:
+    - rule_6_3_4
+    - server_l2
+    - workstation_l2
+  block:
+    - name: "SECTION6 | 6.3.4.7 | Ensure audit configuration files group owner is configured | find *.conf"
+      ansible.builtin.find:
+        paths: /etc/audit/
+        file_type: file
+        patterns: "*.conf"
+        recurse: true
+      register: cis_ubuntu2204_audit_files_conf
+    - name: "SECTION6 | 6.3.4.7 | Ensure audit configuration files group owner is configured | update *.conf"
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        group: root
+      with_items: "{{ cis_ubuntu2204_audit_files_conf.files }}"
+    - name: "SECTION6 | 6.3.4.7 | Ensure audit configuration files group owner is configured | find *.rules"
+      ansible.builtin.find:
+        paths: /etc/audit/
+        file_type: file
+        patterns: "*.rules"
+        recurse: true
+      register: cis_ubuntu2204_audit_files_rules
+    - name: "SECTION6 | 6.3.4.7 | Ensure audit configuration files group owner is configured | update *.rules"
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        group: root
+      with_items: "{{ cis_ubuntu2204_audit_files_rules.files }}"
+
+- name: "SECTION6 | 6.3.4.8 | Ensure audit tools mode is configured"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    mode: "0755"
+  with_items:
+    - /sbin/auditctl
+    - /sbin/aureport
+    - /sbin/ausearch
+    - /sbin/autrace
+    - /sbin/auditd
+    - /sbin/augenrules
+  when:
+    - cis_ubuntu2204_rule_6_3_4_8
+  tags:
+    - rule_6_3_4
+    - server_l2
+    - workstation_l2
+
+- name: "SECTION6 | 6.3.4.9 | Ensure audit tools owner is configured"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: root
+  with_items:
+    - /sbin/auditctl
+    - /sbin/aureport
+    - /sbin/ausearch
+    - /sbin/autrace
+    - /sbin/auditd
+    - /sbin/augenrules
+  when:
+    - cis_ubuntu2204_rule_6_3_4_9
+  tags:
+    - rule_6_3_4
+    - server_l2
+    - workstation_l2
+
+- name: "SECTION6 | 6.3.4.10 | Ensure audit tools group owner is configured"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    group: root
+  with_items:
+    - /sbin/auditctl
+    - /sbin/aureport
+    - /sbin/ausearch
+    - /sbin/autrace
+    - /sbin/auditd
+    - /sbin/augenrules
+  when:
+    - cis_ubuntu2204_rule_6_3_4_10
+  tags:
+    - rule_6_3_4
+    - server_l2
+    - workstation_l2

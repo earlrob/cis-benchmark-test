@@ -9,3 +9,23 @@
     masked: false
     state: reloaded
   listen: systemd restart and enable tmp.mount
+
+- name: "HANDLER | 6.3.2 | systemd restart and enable auditd"
+  become: true
+  ansible.builtin.systemd_service:
+    name: auditd
+    daemon_reload: true
+    enabled: true
+    masked: false
+    state: restarted
+  listen: "restart auditd"
+  when: ansible_virtualization_type != "docker"
+
+- name: "Handler | 5.2.4 | sshd restart"
+  become: true
+  ansible.builtin.systemd_service:
+    name: sshd
+    daemon_reload: true
+    masked: false
+    state: restarted
+  listen: "restart sshd"
