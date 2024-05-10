@@ -1,0 +1,11 @@
+---
+
+- name: "HANDLER | 1.1.2.1 | systemd restart and enable tmp.mount"
+  become: true
+  ansible.builtin.systemd_service:
+    name: tmp.mount
+    daemon_reload: true
+    enabled: true
+    masked: false
+    state: reloaded
+  listen: systemd restart and enable tmp.mount

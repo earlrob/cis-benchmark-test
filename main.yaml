@@ -3,9 +3,20 @@
   remote_user: "{{ ansible_user }}"
   hosts:
     - localhost
-  roles:
-    - role: ansible-cis-ubuntu-2204
-      cis_ubuntu2204_section1: true
-      #
-      cis_ubuntu2204_rule_1_1_2_1: true
+  vars:
+    cis_ubuntu2204_section1_owner_default: root
+    cis_ubuntu2204_section1_group_default: root
+    cis_ubuntu2204_section1_mode_default: "0644"
+    cis_ubuntu2204_rule_1_1_2_1_2: true
+    cis_ubuntu2204_rule_1_1_2_1_3: true
+    cis_ubuntu2204_rule_1_1_2_1_4: true
 
+#  roles:
+#    - role: ansible-cis-ubuntu-2204
+#      cis_ubuntu2204_section1: true
+#      #
+#      cis_ubuntu2204_rule_1_1_2_1: true
+#
+  tasks:
+    - name: 1_1_2_1 fix /tmp filesystem
+      include: tasks/1_1_2_1.yml
