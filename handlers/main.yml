@@ -18,7 +18,7 @@
     enabled: true
     masked: false
     state: restarted
-  listen: "restart auditd"
+  listen: restart auditd
   when: ansible_virtualization_type != "docker"
 
 - name: "Handler | 5.2.4 | sshd restart"
@@ -28,4 +28,22 @@
     daemon_reload: true
     masked: false
     state: restarted
-  listen: "restart sshd"
+  listen: restart sshd
+
+- name: "HANDLER | 1.4.2 | generate new grub config"
+  become: true
+  ansible.builtin.command: >
+    grub-mkconfig -o {{ cis_grub_cfg.stat.path }}
+  listen: "generate new grub config"
+  changed_when: false
+  notify: "fix permissions after generate new grub config handler"
+  when: ansible_virtualization_type != "docker"
+
+- name: "HANDLER | 1.4.2 | fix permissions after generate new grub config handler"
+  become: true
+  ansible.builtin.file:
+    path: "/boot/grub/grub.cfg"
+    owner: root
+    group: root
+    mode: "0400"
+  listen: "fix permissions after generate new grub config handler"
