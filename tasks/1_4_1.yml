@@ -30,7 +30,7 @@
         owner: "{{ cis_ubuntu2204_section1_owner_default }}"
         group: "{{ cis_ubuntu2204_section1_group_default }}"
         mode: "{{ cis_ubuntu2204_section1_mode_etc_grub_d }}"
-      notify: generate new grub config
+#      notify: generate new grub config
       when:
         - cis_grub_bootloader_password is defined
         - cis_grub_bootloader_password.stdout is defined
@@ -40,7 +40,7 @@
         path: /etc/grub.d/10_linux
         regexp: '--class os"'
         replace: '--class os --unrestricted"'
-      notify: generate new grub config
+#      notify: generate new grub config
       when:
         - cis_ubuntu2204_disable_boot_pass
 

@@ -12,8 +12,8 @@
     owner: "{{ cis_ubuntu2204_section1_owner_default }}"
     group: "{{ cis_ubuntu2204_section1_group_default }}"
     mode: "{{ cis_ubuntu2204_section1_mode_default }}"
-  notify:
-    - systemd restart and enable tmp.mount
+#  notify:
+#    - systemd restart and enable tmp.mount
 #  when:
 #    - cis_ubuntu2204_rule_1_1_2_1
   tags:
